@@ -5,10 +5,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Verse;
 
 namespace FunctionalTrains
 {
-    internal class WorldComponent_TunnelList : WorldComponent
+    public class WorldComponent_TunnelList : WorldComponent
     {
         public static WorldComponent_TunnelList Instance;
         public WorldComponent_TunnelList(World world) : base(world) => Instance = this;
@@ -18,6 +19,12 @@ namespace FunctionalTrains
         public List<Tunnel> Tunnels
         {
             get { return tunnels; }
+        }
+
+        public override void ExposeData()
+        {
+            base.ExposeData();
+            //Scribe_Collections.Look(ref tunnels, "FunctionalTrainsTunnels", LookMode.Deep);
         }
     }
 }

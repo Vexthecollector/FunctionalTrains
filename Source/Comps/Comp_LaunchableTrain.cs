@@ -31,20 +31,19 @@ namespace FunctionalTrains
             if (destinationStation !=null)
             {
                 Map map = this.parent.Map;
-                Log.Message("FunctionalTrains: Test");
                 this.Transporter.TryRemoveLord(map);
                 int groupID = this.Transporter.groupID;
                 ThingOwner directlyHeldThings = cachedCompTransporter.GetDirectlyHeldThings();
                 ActiveDropPod activeDropPod = (ActiveDropPod)ThingMaker.MakeThing(ThingDefOf.ActiveDropPod, null);
                 activeDropPod.Contents = new ActiveDropPodInfo();
                 activeDropPod.Contents.innerContainer.TryAddRangeOrTransfer(directlyHeldThings, true, true);
-                Log.Message("FunctionalTrains: Test2");
                 Skyfaller_Train flyShipLeaving = (Skyfaller_Train) SkyfallerMaker.MakeSkyfaller(FunctionalTrainsDefOf.FT_TrainSkyfaller, activeDropPod);
-                // flyShipLeaving = (FlyShipLeaving)SkyfallerMaker.MakeSkyfaller(ThingDefOf.DropPodLeaving, activeDropPod);
-                Log.Message("FunctionalTrains: Test3");
+                //FlyShipLeaving flyShipLeaving = (FlyShipLeaving) SkyfallerMaker.MakeSkyfaller(ThingDefOf.DropPodLeaving, activeDropPod);
+                //PlaceHolderNumber
+                flyShipLeaving.ticksToDiscard = 220;
                 flyShipLeaving.groupID = groupID;
                 flyShipLeaving.destinationTile = destinationStation.Map.Tile;
-                flyShipLeaving.arrivalAction = new TransportPodsArrivalAction_LandInSpecificCell(destinationStation.Map.Parent, destinationStation.parent.Position);
+                flyShipLeaving.arrivalAction = new TransportPodsArrivalAction_LandInSpecificCell(destinationStation.Map.Parent, destinationStation.parent.Position,true);
                 cachedCompTransporter.CleanUpLoadingVars(map);
                 cachedCompTransporter.parent.Destroy(DestroyMode.Vanish);
                 GenSpawn.Spawn(flyShipLeaving, cachedCompTransporter.parent.Position, map, WipeMode.Vanish);

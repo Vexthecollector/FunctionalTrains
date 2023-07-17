@@ -105,6 +105,7 @@ namespace FunctionalTrains
             base.PostExposeData();
             Scribe_Values.Look(ref name, "Name");
             Scribe_References.Look(ref selectedStationThing, "selectedStationThing");
+            Scribe_Deep.Look(ref currentTunnel, "stationCurrentTunnel");
         }
 
         public void process_Stations()

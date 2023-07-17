@@ -7,13 +7,18 @@ using Verse;
 
 namespace FunctionalTrains
 {
-    public class TunnelType
+    public class TunnelType :IExposable
     {
         int type;
 
         public TunnelType(int type)
         {
             this.type = type;
+        }
+
+        public void ExposeData()
+        {
+            Scribe_Values.Look(ref type, "tunnelTypeType");
         }
 
         public int workRequired()

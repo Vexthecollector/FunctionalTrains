@@ -32,14 +32,9 @@ namespace FunctionalTrains
             }
         }
 
-        protected override void Impact()
+        public override void Tick()
         {
-            SpawnThings();
-            innerContainer.ClearAndDestroyContents();
-        }
-        protected override void LeaveMap()
-        {
-            base.LeaveMap();
+            base.Tick();
         }
     }
 }

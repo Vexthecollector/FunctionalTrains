@@ -8,12 +8,13 @@ using Verse;
 
 namespace FunctionalTrains
 {
-    public class Tunnel
+    public class Tunnel : IExposable
     {
 
-        public readonly Map startMap;
-        public readonly Map endMap;
-        public readonly int distance;
+        public Map startMap;
+        public Map endMap;
+        public int distance;
+        List<Rail> rails;
         TunnelType tunnelType;
         int totalWorkRequired;
         int workRequired;
@@ -43,5 +44,16 @@ namespace FunctionalTrains
         public void instantFinishWork() { finished = true; workRequired = 0; useable = true; }
 
         public int percentDone() { return (totalWorkRequired - workRequired / totalWorkRequired) * 100; }
+
+        public void ExposeData()
+        {
+            Scribe_References.Look(ref startMap, "tunnelStartMap");
+            Scribe_References.Look(ref endMap, "tunnelStartMap");
+            Scribe_Deep.Look(ref tunnelType, "tunnelTunnelType");
+            Scribe_Values.Look(ref totalWorkRequired, "tunnelTotalWorkRequired");
+            Scribe_Values.Look(ref workRequired, "tunnelworkRequired");
+            Scribe_Values.Look(ref finished, "tunnelfinished");
+            Scribe_Values.Look(ref useable, "tunneluseable");
+        }
     }
 }

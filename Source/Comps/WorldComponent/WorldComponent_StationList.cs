@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Verse;
 
 namespace FunctionalTrains
 {
@@ -20,6 +21,10 @@ namespace FunctionalTrains
             get { return stations; }
         }
 
+        public override void ExposeData()
+        {
+            base.ExposeData();
+        }
 
     }
 }
