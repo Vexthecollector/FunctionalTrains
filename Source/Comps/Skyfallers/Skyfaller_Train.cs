@@ -14,6 +14,12 @@ namespace FunctionalTrains
         public int groupID = -1;
         public int destinationTile = -1;
         public TransportPodsArrivalAction arrivalAction;
+
+        public bool createWorldObject = false;
+
+        public WorldObjectDef worldObjectDef;
+
+        private bool alreadyLeft;
         public ActiveDropPodInfo Contents
         {
             get
@@ -30,6 +36,10 @@ namespace FunctionalTrains
         {
             SpawnThings();
             innerContainer.ClearAndDestroyContents();
+        }
+        protected override void LeaveMap()
+        {
+            base.LeaveMap();
         }
     }
 }

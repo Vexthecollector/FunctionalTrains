@@ -9,8 +9,9 @@ using Verse;
 namespace FunctionalTrains
 {
     [DefOf]
-    public static class TrainStationDefOf
+    public static class FunctionalTrainsDefOf
     {
         public static ThingDef FT_TrainStation;
+        public static ThingDef FT_TrainSkyfaller;
     }
 }

@@ -54,13 +54,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Content Include="FunctionalTrains\1.4\Defs\ThingDefs_Misc\FT_Skyfallers.xml" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Comps\Building_TrainStation.cs" />
     <Compile Include="Source\Comps\CompProperties\CompProperties_LaunchableTrain.cs" />
     <Compile Include="Source\Comps\CompProperties\CompProperties_TrainStation.cs" />
     <Compile Include="Source\Comps\Comp_TrainStation.cs" />
     <Compile Include="Source\Comps\PlaceWorker\PlaceWorker_OnTrainStation.cs" />
-    <Compile Include="Source\Comps\Def\TrainStationDefOf.cs" />
+    <Compile Include="Source\Comps\Def\FunctionalTrainsDefOf.cs" />
     <Compile Include="Source\Comps\Skyfallers\Skyfaller_Train.cs" />
     <Compile Include="Source\Comps\WorldComponent\WorldComponent_StationList.cs" />
     <Compile Include="Source\Comps\WorldComponent\WorldComponent_TunnelList.cs" />
