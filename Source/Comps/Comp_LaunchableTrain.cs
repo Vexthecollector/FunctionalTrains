@@ -39,7 +39,8 @@ namespace FunctionalTrains
                 activeDropPod.Contents = new ActiveDropPodInfo();
                 activeDropPod.Contents.innerContainer.TryAddRangeOrTransfer(directlyHeldThings, true, true);
                 Log.Message("FunctionalTrains: Test2");
-                Skyfaller_Train flyShipLeaving = (Skyfaller_Train) SkyfallerMaker.MakeSkyfaller(ThingDefOf.DropPodLeaving, activeDropPod);
+                //Skyfaller_Train flyShipLeaving = (Skyfaller_Train) SkyfallerMaker.MakeSkyfaller(ThingDefOf.DropPodLeaving, activeDropPod);
+                FlyShipLeaving flyShipLeaving = (FlyShipLeaving)SkyfallerMaker.MakeSkyfaller(ThingDefOf.DropPodLeaving, activeDropPod);
                 Log.Message("FunctionalTrains: Test3");
                 flyShipLeaving.groupID = groupID;
                 flyShipLeaving.destinationTile = destinationStation.Map.Tile;
