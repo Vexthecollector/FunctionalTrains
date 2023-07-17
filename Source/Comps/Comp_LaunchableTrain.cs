@@ -1,4 +1,4 @@
-﻿using FunctionalTrains.Source.Comps.Skyfallers;
+﻿using FunctionalTrains;
 using RimWorld;
 using RimWorld.Planet;
 using System;
@@ -38,7 +38,9 @@ namespace FunctionalTrains
                 ActiveDropPod activeDropPod = (ActiveDropPod)ThingMaker.MakeThing(ThingDefOf.ActiveDropPod, null);
                 activeDropPod.Contents = new ActiveDropPodInfo();
                 activeDropPod.Contents.innerContainer.TryAddRangeOrTransfer(directlyHeldThings, true, true);
-                Skyfaller_Train flyShipLeaving = (Skyfaller_Train)SkyfallerMaker.MakeSkyfaller(ThingDefOf.DropPodLeaving, activeDropPod);
+                Log.Message("FunctionalTrains: Test2");
+                Skyfaller_Train flyShipLeaving = (Skyfaller_Train) SkyfallerMaker.MakeSkyfaller(ThingDefOf.DropPodLeaving, activeDropPod);
+                Log.Message("FunctionalTrains: Test3");
                 flyShipLeaving.groupID = groupID;
                 flyShipLeaving.destinationTile = destinationStation.Map.Tile;
                 flyShipLeaving.arrivalAction = new TransportPodsArrivalAction_LandInSpecificCell(destinationStation.Map.Parent, destinationStation.parent.Position);

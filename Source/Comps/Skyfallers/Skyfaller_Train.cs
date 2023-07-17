@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Verse;
 
-namespace FunctionalTrains.Source.Comps.Skyfallers
+namespace FunctionalTrains
 {
     internal class Skyfaller_Train : Skyfaller, IActiveDropPod, IThingHolder
     {

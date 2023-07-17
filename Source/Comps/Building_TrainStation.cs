@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Verse;
 
-namespace FunctionalTrains.Source.Comps
+namespace FunctionalTrains
 {
     public  class Building_TrainStation : Building
     {
