@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<ThingDef Name="StationBase" ParentName="BuildingBase" Abstract="true">
+		<tickerType>Normal</tickerType>
+		<thingClass>Building</thingClass>
+		<category>Building</category>
+		<rotatable>false</rotatable>
+		<neverMultiSelect>true</neverMultiSelect>
+		<designationCategory>Misc</designationCategory>
+		<constructEffect>ConstructMetal</constructEffect>
+		<researchPrerequisites>
+		</researchPrerequisites>
+		<altitudeLayer>Floor</altitudeLayer>
+	</ThingDef>
+
+	<ThingDef ParentName="StationBase">
+		<defName>FT_TrainStation</defName>
+		<label>basic train station</label>
+		<description>A Basic Train Station</description>
+		<costList>
+			<Steel>50</Steel>
+		</costList>
+		<graphicData>
+			<texPath>Things/Buildings/FunctionalTrains/placeholder</texPath>
+			<drawSize>2,2</drawSize>
+			<graphicClass>Graphic_Single</graphicClass>
+			<shaderType>Transparent</shaderType>
+			<damageData>
+				<rect>(0.2,0.2,0.6,0.6)</rect>
+			</damageData>
+		</graphicData>
+		<comps>
+			<li Class="FunctionalTrains.CompProperties_TrainStation">
+				<tunnelType>1</tunnelType>
+			</li>
+			<li Class="CompProperties_Refuelable">
+				<fuelCapacity>500.0</fuelCapacity>
+				<targetFuelLevelConfigurable>true</targetFuelLevelConfigurable>
+				<initialConfigurableTargetFuelLevel>150</initialConfigurableTargetFuelLevel>
+				<fuelFilter>
+					<thingDefs>
+						<li>Chemfuel</li>
+					</thingDefs>
+				</fuelFilter>
+				<consumeFuelOnlyWhenUsed>true</consumeFuelOnlyWhenUsed>
+				<autoRefuelPercent>1</autoRefuelPercent>
+				<showFuelGizmo>true</showFuelGizmo>
+				<drawOutOfFuelOverlay>false</drawOutOfFuelOverlay>
+				<drawFuelGaugeInMap>false</drawFuelGaugeInMap>
+				<showAllowAutoRefuelToggle>true</showAllowAutoRefuelToggle>
+			</li>
+		</comps>
+		<building>
+			<isEdifice>false</isEdifice>
+		</building>
+		<size>(4,5)</size>
+	</ThingDef>
+
+	<ThingDef Name="TrainBase" ParentName="BuildingBase" Abstract="true">
+		<tickerType>Normal</tickerType>
+		<thingClass>Building</thingClass>
+		<category>Building</category>
+		<rotatable>false</rotatable>
+		<neverMultiSelect>true</neverMultiSelect>
+		<designationCategory>Misc</designationCategory>
+		<surfaceType>Item</surfaceType>
+		<constructEffect>ConstructMetal</constructEffect>
+		<researchPrerequisites>
+		</researchPrerequisites>
+		<altitudeLayer>Building</altitudeLayer>
+	</ThingDef>
+	
+	<ThingDef ParentName="TrainBase">
+		<defName>FT_BasicTrain</defName>
+		<label>basic train</label>
+		<description>A Basic Train</description>
+		<costList>
+			<Steel>50</Steel>
+		</costList>
+		<graphicData>
+			<texPath>Things/Buildings/FunctionalTrains/placeholder</texPath>
+			<drawSize>1,1</drawSize>
+			<graphicClass>Graphic_Single</graphicClass>
+			<shaderType>Transparent</shaderType>
+			<damageData>
+				<rect>(0.2,0.2,0.6,0.6)</rect>
+			</damageData>
+		</graphicData>
+		<comps>
+			<li Class="CompProperties_Transporter">
+				<restEffectiveness>0.8</restEffectiveness>
+			</li>
+			<li Class="FunctionalTrains.CompProperties_LaunchableTrain">
+				<requireFuel>false</requireFuel>
+			</li>
+		</comps>
+		<placeWorkers>
+			<li>FunctionalTrains.PlaceWorker_OnTrainStation</li>
+		</placeWorkers>
+		<size>(2,3)</size>
+	</ThingDef>
+</Defs>

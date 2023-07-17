@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+	<name>Functional Trains</name>
+	<author>Vex</author>
+	<packageId>Vex.functionaltrains</packageId>
+	<supportedVersions>
+		<li>1.4</li>
+	</supportedVersions>
+	<loadAfter>
+		<li>Ludeon.RimWorld</li>
+		<li>Ludeon.RimWorld.Royalty</li>
+	  </loadAfter>
+	<description>Trains that actually work how one should!</description>
+</ModMetaData>
