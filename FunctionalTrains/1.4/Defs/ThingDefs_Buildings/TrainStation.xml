@@ -71,7 +71,7 @@
 	</ThingDef>
 	
 	<ThingDef ParentName="TrainBase">
-		<defName>FT_BasicTrain</defName>
+		<defName>FT_Train</defName>
 		<label>basic train</label>
 		<description>A Basic Train</description>
 		<costList>

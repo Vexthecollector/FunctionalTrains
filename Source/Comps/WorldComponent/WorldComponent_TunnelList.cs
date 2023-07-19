@@ -11,6 +11,7 @@ namespace FunctionalTrains
 {
     public class WorldComponent_TunnelList : WorldComponent
     {
+
         public static WorldComponent_TunnelList Instance;
         public WorldComponent_TunnelList(World world) : base(world) => Instance = this;
 
@@ -24,7 +25,10 @@ namespace FunctionalTrains
         public override void ExposeData()
         {
             base.ExposeData();
-            //Scribe_Collections.Look(ref tunnels, "FunctionalTrainsTunnels", LookMode.Deep);
+
+
+            Scribe_Collections.Look(ref tunnels, "FunctionalTrainsTunnels", LookMode.Deep);
+            if (tunnels == null) tunnels = new List<Tunnel>();
         }
     }
 }

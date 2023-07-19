@@ -21,6 +21,7 @@ namespace FunctionalTrains
         bool finished;
         bool useable;
 
+        public Tunnel() { }
         public Tunnel(Map startMap, Map endMap, TunnelType tunnelType)
         {
             this.startMap = startMap;
@@ -48,7 +49,7 @@ namespace FunctionalTrains
         public void ExposeData()
         {
             Scribe_References.Look(ref startMap, "tunnelStartMap");
-            Scribe_References.Look(ref endMap, "tunnelStartMap");
+            Scribe_References.Look(ref endMap, "tunnelEndMap");
             Scribe_Deep.Look(ref tunnelType, "tunnelTunnelType");
             Scribe_Values.Look(ref totalWorkRequired, "tunnelTotalWorkRequired");
             Scribe_Values.Look(ref workRequired, "tunnelworkRequired");

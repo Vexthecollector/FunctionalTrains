@@ -30,24 +30,24 @@ namespace FunctionalTrains
             Comp_TrainStation destinationStation = getDestinationStation();
             if (destinationStation !=null)
             {
-                Map map = this.parent.Map;
-                this.Transporter.TryRemoveLord(map);
-                int groupID = this.Transporter.groupID;
-                ThingOwner directlyHeldThings = cachedCompTransporter.GetDirectlyHeldThings();
-                ActiveDropPod activeDropPod = (ActiveDropPod)ThingMaker.MakeThing(ThingDefOf.ActiveDropPod, null);
-                activeDropPod.Contents = new ActiveDropPodInfo();
-                activeDropPod.Contents.innerContainer.TryAddRangeOrTransfer(directlyHeldThings, true, true);
-                Skyfaller_Train flyShipLeaving = (Skyfaller_Train) SkyfallerMaker.MakeSkyfaller(FunctionalTrainsDefOf.FT_TrainSkyfaller, activeDropPod);
-                //FlyShipLeaving flyShipLeaving = (FlyShipLeaving) SkyfallerMaker.MakeSkyfaller(ThingDefOf.DropPodLeaving, activeDropPod);
-                //PlaceHolderNumber
-                flyShipLeaving.ticksToDiscard = 220;
-                flyShipLeaving.groupID = groupID;
-                flyShipLeaving.destinationTile = destinationStation.Map.Tile;
-                flyShipLeaving.arrivalAction = new TransportPodsArrivalAction_LandInSpecificCell(destinationStation.Map.Parent, destinationStation.parent.Position,true);
-                cachedCompTransporter.CleanUpLoadingVars(map);
-                cachedCompTransporter.parent.Destroy(DestroyMode.Vanish);
-                GenSpawn.Spawn(flyShipLeaving, cachedCompTransporter.parent.Position, map, WipeMode.Vanish);
+                CopyBuilding(destinationStation.Map, this.parent, FunctionalTrainsDefOf.FT_Train, destinationStation.parent.Position);
             }
+        }
+
+
+        private Thing CopyBuilding(Map map, ThingWithComps oldBuilding, ThingDef def, IntVec3 newPosition)
+        {
+            int hitPoints = oldBuilding.HitPoints;
+            IntVec3 position = newPosition;
+            ThingWithComps newBuilding = (ThingWithComps) ThingMaker.MakeThing(def);
+            newBuilding.HitPoints = hitPoints;
+            newBuilding.SetFaction(Faction.OfPlayer);
+            GenSpawn.Spawn(newBuilding, position, map);
+            newBuilding.GetComp<CompTransporter>().innerContainer.TryTransferAllToContainer(cachedCompTransporter.innerContainer);
+            cachedCompTransporter.innerContainer.Clear();
+            cachedCompTransporter.CancelLoad();
+            oldBuilding.Destroy();
+            return newBuilding;
         }
 
 

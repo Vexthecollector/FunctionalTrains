@@ -11,6 +11,7 @@ namespace FunctionalTrains
     {
         int type;
 
+        public TunnelType() { }
         public TunnelType(int type)
         {
             this.type = type;

@@ -12,6 +12,6 @@ namespace FunctionalTrains
     public static class FunctionalTrainsDefOf
     {
         public static ThingDef FT_TrainStation;
-        public static ThingDef FT_TrainSkyfaller;
+        public static ThingDef FT_Train;
     }
 }
