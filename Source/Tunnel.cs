@@ -14,10 +14,10 @@ namespace FunctionalTrains
         public Map startMap;
         public Map endMap;
         public int distance;
-        List<Rail> rails;
+        List<Rail> rails = new List<Rail>();
         TunnelType tunnelType;
-        int totalWorkRequired;
-        int workRequired;
+        int totalTunnelWorkRequired;
+        int tunnelWorkRequired;
         bool finished;
         bool useable;
 
@@ -28,31 +28,39 @@ namespace FunctionalTrains
             this.endMap = endMap;
             distance = Find.WorldGrid.TraversalDistanceBetween(startMap.Tile, endMap.Tile);
             this.tunnelType = tunnelType;
-            totalWorkRequired = workRequired = tunnelType.workRequired() * distance;
+            totalTunnelWorkRequired = tunnelWorkRequired = tunnelType.WorkRequired() * distance;
         }
 
 
 
-        public bool isUseable() { return useable; }
-        public bool isFinished() { return finished; }
+        public bool IsFinished() { return finished; }
 
-        public void workOnTunnel(int workdone)
+        public void WorkOnTunnel(int workdone)
         {
-            workRequired -= workdone;
-            if (workRequired < 1) { finished = true; useable = true; }
+            tunnelWorkRequired -= workdone;
+            if (tunnelWorkRequired < 1) { finished = true; useable = true; }
         }
 
-        public void instantFinishWork() { finished = true; workRequired = 0; useable = true; }
+        public bool IsUseable()
+        {
+            if(/*rails.Any(rail=>rail.useable) && */useable) return true;
+            return false;
+        }
+        public void InstantFinishWork() { finished = true; tunnelWorkRequired = 0; useable = true; }
 
-        public int percentDone() { return (totalWorkRequired - workRequired / totalWorkRequired) * 100; }
+        public int PercentDone() { return (totalTunnelWorkRequired - tunnelWorkRequired / totalTunnelWorkRequired) * 100; }
+
+        public List<Rail> Rails() {  return rails; }
+        public TunnelType TunnelType() { return tunnelType; }
+
 
         public void ExposeData()
         {
             Scribe_References.Look(ref startMap, "tunnelStartMap");
             Scribe_References.Look(ref endMap, "tunnelEndMap");
             Scribe_Deep.Look(ref tunnelType, "tunnelTunnelType");
-            Scribe_Values.Look(ref totalWorkRequired, "tunnelTotalWorkRequired");
-            Scribe_Values.Look(ref workRequired, "tunnelworkRequired");
+            Scribe_Values.Look(ref totalTunnelWorkRequired, "tunnelTotalWorkRequired");
+            Scribe_Values.Look(ref tunnelWorkRequired, "tunnelworkRequired");
             Scribe_Values.Look(ref finished, "tunnelfinished");
             Scribe_Values.Look(ref useable, "tunneluseable");
         }

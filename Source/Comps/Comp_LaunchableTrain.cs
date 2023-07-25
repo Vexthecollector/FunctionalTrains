@@ -59,7 +59,7 @@ namespace FunctionalTrains
             Comp_TrainStation station= getStation();
             if (station!=null && station.selectedStation!=null)
             {
-                if(station.currentTunnel!=null && station.currentTunnel.isUseable())
+                if(station.currentTunnel!=null && station.currentTunnel.IsUseable())
                 {
                     return station.selectedStation;
                 }

@@ -66,6 +66,7 @@
     <Compile Include="Source\Comps\WorldComponent\WorldComponent_TunnelList.cs" />
     <Compile Include="Source\Comps\Comp_LaunchableTrain.cs" />
     <Compile Include="Source\Rail.cs" />
+    <Compile Include="Source\RailType.cs" />
     <Compile Include="Source\Tunnel.cs" />
     <Compile Include="Source\TunnelType.cs" />
   </ItemGroup>
