@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Building_Train.cs" />
     <Compile Include="Source\Comps\Building_TrainStation.cs" />
     <Compile Include="Source\Comps\CompProperties\CompProperties_LaunchableTrain.cs" />
     <Compile Include="Source\Comps\CompProperties\CompProperties_TrainStation.cs" />

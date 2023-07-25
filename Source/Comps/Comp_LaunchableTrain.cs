@@ -42,10 +42,12 @@ namespace FunctionalTrains
             ThingWithComps newBuilding = (ThingWithComps) ThingMaker.MakeThing(def);
             newBuilding.HitPoints = hitPoints;
             newBuilding.SetFaction(Faction.OfPlayer);
+            cachedCompTransporter.innerContainer.TryTransferAllToContainer(newBuilding.GetComp<CompTransporter>().innerContainer);
             GenSpawn.Spawn(newBuilding, position, map);
-            newBuilding.GetComp<CompTransporter>().innerContainer.TryTransferAllToContainer(cachedCompTransporter.innerContainer);
+            newBuilding.GetComp<CompTransporter>().groupID = 0;
             cachedCompTransporter.innerContainer.Clear();
             cachedCompTransporter.CancelLoad();
+            //SkyfallerDrawPosUtility.DrawPos_ConstantSpeed(newBuilding.DrawPos, 500, 90, 10);
             oldBuilding.Destroy();
             return newBuilding;
         }

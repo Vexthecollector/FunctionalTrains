@@ -89,6 +89,8 @@
 		<comps>
 			<li Class="CompProperties_Transporter">
 				<restEffectiveness>0.8</restEffectiveness>
+				<canChangeAssignedThingsAfterStarting>true</canChangeAssignedThingsAfterStarting>
+				<max1PerGroup>true</max1PerGroup>
 			</li>
 			<li Class="FunctionalTrains.CompProperties_LaunchableTrain">
 				<requireFuel>false</requireFuel>
