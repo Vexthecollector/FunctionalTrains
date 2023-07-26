@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 	<ThingDef Name="StationBase" ParentName="BuildingBase" Abstract="true">
-		<tickerType>Normal</tickerType>
+		<tickerType>Rare</tickerType>
 		<thingClass>Building</thingClass>
 		<category>Building</category>
 		<rotatable>false</rotatable>

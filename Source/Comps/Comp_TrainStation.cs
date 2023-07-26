@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Verse;
 using UnityEngine;
 using System.Threading;
+using System.Net.Http;
 
 namespace FunctionalTrains
 {
@@ -22,6 +23,7 @@ namespace FunctionalTrains
         private Command_Action selectStation;
         private Command_Action createTunnel;
         private Command_Action createRail;
+        private Command_Action instantFinishRail;
         public Tunnel currentTunnel;
         public Map Map => parent.MapHeld;
 
@@ -36,7 +38,7 @@ namespace FunctionalTrains
             if (selectedStationThing != null)
             {
                 DoPostSpawnStuff();
-  
+
             }
 
             setName = new Command_Action
@@ -73,8 +75,16 @@ namespace FunctionalTrains
                     CreateRail();
                 }
             };
+            instantFinishRail = new Command_Action
+            {
+                defaultLabel = "DEV: Finish Rail",
+                action = delegate
+                {
+                    InstantFinishRail();
+                }
+            };
 
-
+            CreateStringContent();
             if (respawningAfterLoad) return;
             Find.WindowStack.Add(new Dialog_RenameStation(this));
         }
@@ -84,7 +94,6 @@ namespace FunctionalTrains
             selectedStation = selectedStationThing.GetComp<Comp_TrainStation>();
             currentTunnel = GetTunnel();
         }
-
         public override void PostDeSpawn(Map map)
         {
             WorldComponent_StationList.Instance.Stations.Remove(this);
@@ -100,12 +109,12 @@ namespace FunctionalTrains
             }
             yield return setName;
             yield return selectStation;
-            
+
             if (selectedStation != null && GetTunnel() == null)
             {
                 yield return createTunnel;
             }
-            if(currentTunnel?.IsUseable() ?? false)
+            if (currentTunnel?.IsUseable() ?? false /*&& currentTunnel?.MaxRails()>currentTunnel?.CurrentRails()*/)
             {
                 yield return createRail;
             }
@@ -122,6 +131,12 @@ namespace FunctionalTrains
                     };
                     yield return command_Action;
                 }
+
+                if (currentTunnel.Rails().Count() > 0)
+                {
+                    yield return instantFinishRail;
+                }
+
             }
         }
 
@@ -133,9 +148,22 @@ namespace FunctionalTrains
             //Scribe_Deep.Look(ref currentTunnel, "stationCurrentTunnel");
         }
 
-       
+        public override void CompTickRare()
+        {
+            base.CompTickRare();
+            if (currentTunnel == null) currentTunnel = GetTunnel();
+            CreateStringContent();
+        }
 
+
+        string stringContent;
         public override string CompInspectStringExtra()
+        {
+            //CreateStringContent();
+            return stringContent + base.CompInspectStringExtra();
+        }
+
+        public void CreateStringContent()
         {
             string text = "Station Name: " + this.name;
             if (this.selectedStation != null)
@@ -145,36 +173,46 @@ namespace FunctionalTrains
 
             if (this.currentTunnel != null)
             {
-                if (currentTunnel.IsFinished() == false) text += "\nPercent Done: " + currentTunnel.PercentDone() + "";
+                if (currentTunnel.IsFinished() == false) text += "\nTunnel is " + currentTunnel.PercentDone() + "% done.";
                 else if (currentTunnel.IsUseable()) text += $"\n{this.currentTunnel.TunnelType().TunnelName()} is useable";
                 else text += $"\n{this.currentTunnel.TunnelType().TunnelName()} is not useable";
             }
             if (this.currentTunnel?.Rails()?.Count > 0)
             {
-                for (int i = 0;i<this.currentTunnel.Rails().Count;i++)
+                for (int i = 0; i < this.currentTunnel.Rails().Count; i++)
                 {
                     Rail rail = this.currentTunnel.Rails()[i];
-                    if (rail.IsFinished() == false) text += $"\nRail {i} is " + rail.PercentDone() + "% done";
-                    else if (rail.IsUseable()) text += $"\nRail {i} is useable";
-                    else text += $"\nRail {i} is not useable";
+                    if (rail.IsFinished() == false) text += $"\nRail {i + 1} is " + rail.PercentDone() + "% done";
+                    else if (rail.IsUseable()) text += $"\nRail {i + 1} is useable";
+                    else text += $"\nRail {i + 1} is not useable";
                 }
             }
-            return text + base.CompInspectStringExtra();
+            stringContent = text;
         }
 
         public int GetDistance()
         {
-            return Find.WorldGrid.TraversalDistanceBetween(this.Map.Tile, selectedStation.Map.Tile);
+            try
+            {
+
+                return Find.WorldGrid.TraversalDistanceBetween(this.Map.Tile, selectedStation.Map.Tile);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("FT_Train: Couldn't find distance between the two stations. Returning -1.");
+            }
+            return -1;
         }
 
         public void InstantFinishTunnel()
         {
             currentTunnel.InstantFinishWork();
+            CreateStringContent();
         }
 
         public Tunnel GetTunnel()
         {
-            if (this.selectedStation != null && this.Map != selectedStation.Map)
+            if (selectedStation?.Map != null)
             {
                 for (int i = 0; i < WorldComponent_TunnelList.Instance.Tunnels.Count; i++)
                 {
@@ -194,10 +232,31 @@ namespace FunctionalTrains
             for (int i = 0; i < this.currentTunnel.TunnelType().Type(); i++)
             {
                 RailType railType = new RailType(i + 1);
-                list.Add(new FloatMenuOption("Create " + railType.RailName(), () => {
+                list.Add(new FloatMenuOption("Create " + railType.RailName(), () =>
+                {
                     //Code to write
-                    Rail rail = new Rail(currentTunnel,railType);
+                    Rail rail = new Rail(currentTunnel, railType);
                     currentTunnel.Rails().Add(rail);
+                    CreateStringContent();
+                }));
+
+            }
+            if (list.Any<FloatMenuOption>())
+            {
+                Find.WindowStack.Add(new FloatMenu(list));
+            }
+        }
+
+        public void InstantFinishRail()
+        {
+            List<FloatMenuOption> list = new List<FloatMenuOption>();
+            for (int i = 0; i < this.currentTunnel.Rails().Count; i++)
+            {
+                int j = i;
+                list.Add(new FloatMenuOption($"Finish Rail {j + 1}", () =>
+                {
+                    this.currentTunnel.Rails()[j].InstantFinishWork();
+                    CreateStringContent();
                 }));
 
             }
@@ -234,6 +293,7 @@ namespace FunctionalTrains
             Tunnel tunnel = new Tunnel(this.Map, selectedStation.Map, tunnelType);
             WorldComponent_TunnelList.Instance.Tunnels.AddDistinct(tunnel);
             currentTunnel = tunnel;
+            CreateStringContent();
         }
 
         private void PossibleTunnelCreations()
@@ -244,7 +304,8 @@ namespace FunctionalTrains
                 for (int i = 0; i < 6; i++)
                 {
                     TunnelType tunnelType = new TunnelType(i + 1);
-                    list.Add(new FloatMenuOption("Create " + tunnelType.TunnelName(), () => {
+                    list.Add(new FloatMenuOption("Create " + tunnelType.TunnelName(), () =>
+                    {
                         CreateTunnel(tunnelType);
                     }));
 
@@ -262,7 +323,6 @@ namespace FunctionalTrains
         {
             if (GetTunnel() == null) CreateTunnel(tunnelType);
         }
-
     }
 
     public class Dialog_RenameStation : Dialog_Rename
@@ -284,10 +344,12 @@ namespace FunctionalTrains
                 {
                     Messages.Message("Station with the same Name already exists, appending 1 to the name", MessageTypeDefOf.RejectInput);
                     this.Station.name = name + 1;
+                    this.Station.CreateStringContent();
                     return;
                 }
             }
             this.Station.name = name;
+            this.Station.CreateStringContent();
         }
     }
 }

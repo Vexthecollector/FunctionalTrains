@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine.Diagnostics;
 using Verse;
 
 namespace FunctionalTrains
 {
-    public class Rail
+    public class Rail : IExposable
     {
         bool useable;
         bool finished;
         int totalRailWorkRequired;
         int railWorkRequired;
+        public bool inUse;
         RailType railType;
         Tunnel parentTunnel;
 
@@ -21,12 +23,13 @@ namespace FunctionalTrains
         {
             this.parentTunnel = tunnel;
             this.railType = railType;
-            totalRailWorkRequired = railWorkRequired = railType.WorkRequired() * parentTunnel.distance;
+            totalRailWorkRequired = railWorkRequired = railType.WorkRequired() * parentTunnel.GetDistance();
         }
 
         public RailType RailType() { return railType; }
         public bool IsUseable()
         {
+            if (inUse) return false;
             return useable;
         }
         public bool IsFinished()
@@ -36,6 +39,15 @@ namespace FunctionalTrains
         public void InstantFinishWork() { finished = true; railWorkRequired = 0; useable = true; }
 
         public int PercentDone() {
-            return (totalRailWorkRequired - railWorkRequired / totalRailWorkRequired) * 100; }
+            return ((totalRailWorkRequired-railWorkRequired) / totalRailWorkRequired) * 100; }
+
+        public void ExposeData()
+        {
+            Scribe_Deep.Look(ref railType, "railRailTypee");
+            Scribe_Values.Look(ref totalRailWorkRequired, "railTotalWorkRequired");
+            Scribe_Values.Look(ref railWorkRequired, "railworkRequired");
+            Scribe_Values.Look(ref finished, "railfinished");
+            Scribe_Values.Look(ref useable, "railuseable");
+        }
     }
 }

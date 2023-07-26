@@ -13,7 +13,6 @@ namespace FunctionalTrains
 
         public Map startMap;
         public Map endMap;
-        public int distance;
         List<Rail> rails = new List<Rail>();
         TunnelType tunnelType;
         int totalTunnelWorkRequired;
@@ -26,9 +25,8 @@ namespace FunctionalTrains
         {
             this.startMap = startMap;
             this.endMap = endMap;
-            distance = Find.WorldGrid.TraversalDistanceBetween(startMap.Tile, endMap.Tile);
             this.tunnelType = tunnelType;
-            totalTunnelWorkRequired = tunnelWorkRequired = tunnelType.WorkRequired() * distance;
+            totalTunnelWorkRequired = tunnelWorkRequired = tunnelType.WorkRequired() * GetDistance();
         }
 
 
@@ -43,21 +41,31 @@ namespace FunctionalTrains
 
         public bool IsUseable()
         {
-            if(/*rails.Any(rail=>rail.useable) && */useable) return true;
+            if(rails.Any(rail=>rail.IsUseable()) && useable) return true;
             return false;
+        }
+
+        public int GetDistance()
+        {
+            return Find.WorldGrid.TraversalDistanceBetween(startMap.Tile, endMap.Tile);
         }
         public void InstantFinishWork() { finished = true; tunnelWorkRequired = 0; useable = true; }
 
-        public int PercentDone() { return (totalTunnelWorkRequired - tunnelWorkRequired / totalTunnelWorkRequired) * 100; }
+        public int PercentDone() { return ((totalTunnelWorkRequired-tunnelWorkRequired) / totalTunnelWorkRequired) * 100; }
 
         public List<Rail> Rails() {  return rails; }
         public TunnelType TunnelType() { return tunnelType; }
+
+        public int MaxRails() { return tunnelType.RailsAvailable(); }
+        public int CurrentRails() { return rails.Count(); }
 
 
         public void ExposeData()
         {
             Scribe_References.Look(ref startMap, "tunnelStartMap");
             Scribe_References.Look(ref endMap, "tunnelEndMap");
+            Scribe_Collections.Look(ref rails, "tunnelRails", LookMode.Deep);
+            if (rails == null) rails = new List<Rail>();
             Scribe_Deep.Look(ref tunnelType, "tunnelTunnelType");
             Scribe_Values.Look(ref totalTunnelWorkRequired, "tunnelTotalWorkRequired");
             Scribe_Values.Look(ref tunnelWorkRequired, "tunnelworkRequired");
