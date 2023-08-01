@@ -13,5 +13,9 @@ namespace FunctionalTrains
     {
         public static ThingDef FT_TrainStation;
         public static ThingDef FT_Train;
+        public static JobDef FT_JobBuildTunnel;
+        public static JobDef FT_JobBuildRail;
+        public static WorkGiverDef FT_WorkBuildTunnel;
+        public static WorkGiverDef FT_WorkBuildRail;
     }
 }

@@ -16,6 +16,7 @@ namespace FunctionalTrains
     {
         private static readonly Texture2D stationSelectIcon = ContentFinder<Texture2D>.Get("Things/Buildings/FunctionalTrains/stationSelectIcon");
         public ThingOwner innerContainer;
+        string stringContent;
         public string name;
         public ThingWithComps selectedStationThing;
         public Comp_TrainStation selectedStation;
@@ -114,14 +115,14 @@ namespace FunctionalTrains
             {
                 yield return createTunnel;
             }
-            if (currentTunnel?.IsUseable() ?? false /*&& currentTunnel?.MaxRails()>currentTunnel?.CurrentRails()*/)
+            if (currentTunnel!=null && currentTunnel.IsFinished() && (currentTunnel?.MaxRails()>currentTunnel?.CurrentRails()))
             {
                 yield return createRail;
             }
 
             if (DebugSettings.ShowDevGizmos)
             {
-                if (selectedStation != null && GetTunnel() != null)
+                if (selectedStation != null && (!GetTunnel()?.IsFinished()?? false))
                 {
                     Command_Action command_Action = new Command_Action();
                     command_Action.defaultLabel = "DEV: Finish tunnel";
@@ -132,7 +133,7 @@ namespace FunctionalTrains
                     yield return command_Action;
                 }
 
-                if (currentTunnel.Rails().Count() > 0)
+                if (currentTunnel?.Rails()?.Count() > 0)
                 {
                     yield return instantFinishRail;
                 }
@@ -156,7 +157,7 @@ namespace FunctionalTrains
         }
 
 
-        string stringContent;
+
         public override string CompInspectStringExtra()
         {
             //CreateStringContent();
@@ -173,7 +174,7 @@ namespace FunctionalTrains
 
             if (this.currentTunnel != null)
             {
-                if (currentTunnel.IsFinished() == false) text += "\nTunnel is " + currentTunnel.PercentDone() + "% done.";
+                if (currentTunnel.IsFinished() == false) text += $"\nTunnel Work Left: {currentTunnel.TunnelWorkRequired()}/{currentTunnel.TotalTunnelWorkRequired()} ({currentTunnel.PercentDone()}%).";
                 else if (currentTunnel.IsUseable()) text += $"\n{this.currentTunnel.TunnelType().TunnelName()} is useable";
                 else text += $"\n{this.currentTunnel.TunnelType().TunnelName()} is not useable";
             }
@@ -266,6 +267,20 @@ namespace FunctionalTrains
             }
         }
 
+        public void WorkOnRail(Pawn builder)
+        {
+            float statValue = builder.GetStatValue(StatDefOf.ConstructionSpeed, true, -1);
+            Rail rail = GetFirstRailToBuild();
+            rail.WorkOnRail(statValue);
+        }
+
+        public Rail GetFirstRailToBuild()
+        {
+            if (currentTunnel.Rails().Any(rail => !rail.IsFinished()))
+                return currentTunnel?.Rails()?.First(rail => !rail.IsFinished());
+            return null;
+        }
+
         public void Process_Stations()
         {
             List<FloatMenuOption> list = new List<FloatMenuOption>();
@@ -322,6 +337,17 @@ namespace FunctionalTrains
         public void CreateTunnelIfNotExist(TunnelType tunnelType)
         {
             if (GetTunnel() == null) CreateTunnel(tunnelType);
+        }
+
+        public void TunnelWorkDone(Pawn tunneler)
+        {
+            float statValue = tunneler.GetStatValue(StatDefOf.MiningSpeed, true, -1);
+            currentTunnel.WorkOnTunnel(statValue);
+        }
+
+        public bool CanWorkNow()
+        {
+            return true;
         }
     }
 

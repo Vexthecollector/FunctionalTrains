@@ -15,8 +15,8 @@ namespace FunctionalTrains
         public Map endMap;
         List<Rail> rails = new List<Rail>();
         TunnelType tunnelType;
-        int totalTunnelWorkRequired;
-        int tunnelWorkRequired;
+        float totalTunnelWorkRequired;
+        float tunnelWorkRequired;
         bool finished;
         bool useable;
 
@@ -33,7 +33,7 @@ namespace FunctionalTrains
 
         public bool IsFinished() { return finished; }
 
-        public void WorkOnTunnel(int workdone)
+        public void WorkOnTunnel(float workdone)
         {
             tunnelWorkRequired -= workdone;
             if (tunnelWorkRequired < 1) { finished = true; useable = true; }
@@ -51,13 +51,15 @@ namespace FunctionalTrains
         }
         public void InstantFinishWork() { finished = true; tunnelWorkRequired = 0; useable = true; }
 
-        public int PercentDone() { return ((totalTunnelWorkRequired-tunnelWorkRequired) / totalTunnelWorkRequired) * 100; }
+        public int PercentDone() { return (int)(((totalTunnelWorkRequired-tunnelWorkRequired) / totalTunnelWorkRequired) * 100); }
 
         public List<Rail> Rails() {  return rails; }
         public TunnelType TunnelType() { return tunnelType; }
 
         public int MaxRails() { return tunnelType.RailsAvailable(); }
         public int CurrentRails() { return rails.Count(); }
+        public float TunnelWorkRequired () { return tunnelWorkRequired; }
+        public float TotalTunnelWorkRequired() { return totalTunnelWorkRequired; }
 
 
         public void ExposeData()

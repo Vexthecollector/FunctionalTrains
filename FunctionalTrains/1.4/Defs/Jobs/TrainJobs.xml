@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<JobDef>
+		<defName>FT_JobBuildTunnel</defName>
+		<driverClass>FunctionalTrains.JobDriver_BuildTunnel</driverClass>
+		<reportString>building a tunnel at TargetA.</reportString>
+		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+	</JobDef>
+
+	<WorkGiverDef>
+		<defName>FT_WorkBuildTunnel</defName>
+		<label>build a tunnel</label>
+		<giverClass>FunctionalTrains.WorkGiver_BuildTunnel</giverClass>
+		<workType>Mining</workType>
+		<verb>mine</verb>
+		<gerund>mining</gerund>
+		<priorityInType>18</priorityInType>
+		<requiredCapacities>
+			<li>Manipulation</li>
+		</requiredCapacities>
+	</WorkGiverDef>
+
+	<JobDef>
+		<defName>FT_JobBuildRail</defName>
+		<driverClass>FunctionalTrains.JobDriver_BuildRail</driverClass>
+		<reportString>building a rail at TargetA.</reportString>
+		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+	</JobDef>
+
+	<WorkGiverDef>
+		<defName>FT_WorkBuildRail</defName>
+		<label>build a rail</label>
+		<giverClass>FunctionalTrains.WorkGiver_BuildRail</giverClass>
+		<workType>Construction</workType>
+		<verb>construct</verb>
+		<gerund>constructing</gerund>
+		<priorityInType>18</priorityInType>
+		<requiredCapacities>
+			<li>Manipulation</li>
+		</requiredCapacities>
+	</WorkGiverDef>
+</Defs>

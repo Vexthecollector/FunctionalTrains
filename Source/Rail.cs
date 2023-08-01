@@ -12,8 +12,8 @@ namespace FunctionalTrains
     {
         bool useable;
         bool finished;
-        int totalRailWorkRequired;
-        int railWorkRequired;
+        float totalRailWorkRequired;
+        float railWorkRequired;
         public bool inUse;
         RailType railType;
         Tunnel parentTunnel;
@@ -38,8 +38,14 @@ namespace FunctionalTrains
         }
         public void InstantFinishWork() { finished = true; railWorkRequired = 0; useable = true; }
 
+        public void WorkOnRail(float workdone)
+        {
+            railWorkRequired -= workdone;
+            if (railWorkRequired < 1) { finished = true; useable = true; }
+        }
+
         public int PercentDone() {
-            return ((totalRailWorkRequired-railWorkRequired) / totalRailWorkRequired) * 100; }
+            return (int)(((totalRailWorkRequired-railWorkRequired) / totalRailWorkRequired) * 100); }
 
         public void ExposeData()
         {

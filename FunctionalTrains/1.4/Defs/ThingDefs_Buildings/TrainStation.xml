@@ -53,14 +53,14 @@
 		<building>
 			<isEdifice>false</isEdifice>
 		</building>
-		<size>(4,5)</size>
+		<size>(5,7)</size>
 	</ThingDef>
 
 	<ThingDef Name="TrainBase" ParentName="BuildingBase" Abstract="true">
 		<tickerType>Normal</tickerType>
 		<thingClass>Building</thingClass>
 		<category>Building</category>
-		<rotatable>false</rotatable>
+		<rotatable>true</rotatable>
 		<neverMultiSelect>true</neverMultiSelect>
 		<designationCategory>Misc</designationCategory>
 		<surfaceType>Item</surfaceType>
@@ -78,9 +78,9 @@
 			<Steel>50</Steel>
 		</costList>
 		<graphicData>
-			<texPath>Things/Buildings/FunctionalTrains/placeholder</texPath>
-			<drawSize>1,1</drawSize>
-			<graphicClass>Graphic_Single</graphicClass>
+			<texPath>Things/Buildings/FunctionalTrains/Train</texPath>
+			<drawSize>4,6</drawSize>
+			<graphicClass>Graphic_Multi</graphicClass>
 			<shaderType>Transparent</shaderType>
 			<damageData>
 				<rect>(0.2,0.2,0.6,0.6)</rect>
@@ -99,6 +99,6 @@
 		<placeWorkers>
 			<li>FunctionalTrains.PlaceWorker_OnTrainStation</li>
 		</placeWorkers>
-		<size>(2,3)</size>
+		<size>(3,5)</size>
 	</ThingDef>
 </Defs>

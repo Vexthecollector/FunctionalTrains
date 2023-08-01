@@ -65,12 +65,17 @@
     <Compile Include="Source\Comps\WorldComponent\WorldComponent_StationList.cs" />
     <Compile Include="Source\Comps\WorldComponent\WorldComponent_TunnelList.cs" />
     <Compile Include="Source\Comps\Comp_LaunchableTrain.cs" />
+    <Compile Include="Source\JobDriver\JobDriver_BuildRail.cs" />
+    <Compile Include="Source\JobDriver\JobDriver_BuildTunnel.cs" />
+    <Compile Include="Source\JobDriver\WorkGiver_BuildRail.cs" />
+    <Compile Include="Source\JobDriver\WorkGiver_BuildTunnel.cs" />
     <Compile Include="Source\Rail.cs" />
     <Compile Include="Source\RailType.cs" />
     <Compile Include="Source\Tunnel.cs" />
     <Compile Include="Source\TunnelType.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FunctionalTrains\1.4\Defs\Jobs\TrainJobs.xml" />
     <Content Include="FunctionalTrains\1.4\Defs\ThingDefs_Buildings\TrainStation.xml" />
     <Content Include="FunctionalTrains\About\About.xml" />
     <Content Include="FunctionalTrains\Textures\Things\Buildings\FunctionalTrains\placeholder.png" />
@@ -78,7 +83,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FunctionalTrains\1.4\Assemblies\" />
-    <Folder Include="Source\Jobs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
