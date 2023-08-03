@@ -131,11 +131,10 @@ namespace FunctionalTrains
 
 
 
-        public void PrepareArrive(int ticksToArrive, int leavingTicks, Rail rail)
+        public void PrepareArrive(int ticksToArrive, int leavingTicks, Rail rail,Rot4 r4)
         {
             usedRail = rail;
             rail.inUse = true;
-            Rot4 r4 = this.Rotation;
             initialAngleVector = r4.FacingCell.ToVector3();
             angleVector = initialAngleVector;
             angleVector.Scale(new Vector3(-ticksToArrive, -ticksToArrive, -ticksToArrive));

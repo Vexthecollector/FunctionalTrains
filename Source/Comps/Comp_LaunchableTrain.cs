@@ -51,9 +51,10 @@ namespace FunctionalTrains
 
                 if (this.Props.requireFuel)
                 {
-                    float fuelcost = currentlyResidingStation.currentTunnel.GetDistance() * 2;
+                    ;
+                    float fuelcost = Find.WorldGrid.TraversalDistanceBetween(currentlyResidingStation.Map.Tile, destinationStation.Map.Tile) * 2;
                     CompRefuelable currentFuel = currentlyResidingStation.parent.GetComp<CompRefuelable>();
-                    if (currentFuel.Fuel > fuelcost)
+                    if (currentFuel.Fuel >= fuelcost)
                     {
                         SendTrainToNewMap(destinationStation, destinationStation.Map, (Building_Train)this.parent, FunctionalTrainsDefOf.FT_Train, destinationStation.parent.Position, rail);
                         currentFuel.ConsumeFuel(fuelcost);
@@ -84,7 +85,7 @@ namespace FunctionalTrains
             cachedCompTransporter.innerContainer.TryTransferAllToContainer(newBuilding.GetComp<CompTransporter>().innerContainer);
             newBuilding.GetComp<CompTransporter>().groupID = 0;
             int time = rail.RailType().ticksPerTile();
-            newBuilding.PrepareArrive(100, time, rail);
+            newBuilding.PrepareArrive(100, time, rail, destinationStation.parent.Rotation);
             currentlyResidingStation.isOccupied = false;
             cachedCompTransporter.innerContainer.Clear();
             cachedCompTransporter.CancelLoad();
