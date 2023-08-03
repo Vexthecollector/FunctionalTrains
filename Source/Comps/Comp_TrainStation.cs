@@ -8,6 +8,7 @@ using Verse;
 using UnityEngine;
 using System.Threading;
 using System.Net.Http;
+using static System.Collections.Specialized.BitVector32;
 
 namespace FunctionalTrains
 {
@@ -372,6 +373,7 @@ namespace FunctionalTrains
 
         protected override void SetName(string name)
         {
+            if(name==null) name ="Train Station " + " #" + Rand.Range(1, 99).ToString("D2");
             for (int i = 0; i < WorldComponent_StationList.Instance.Stations.Count; i++)
             {
                 if (WorldComponent_StationList.Instance.Stations[i].name == name)

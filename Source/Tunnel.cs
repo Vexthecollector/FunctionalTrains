@@ -36,12 +36,18 @@ namespace FunctionalTrains
             if (tunnelWorkRequired < 1) { finished = true; useable = true; }
         }
 
+        /// <summary>
+        ///  Checks if the tunnel and any rails (if there are any) are useable.
+        /// </summary>
         public bool IsUseable()
         {
             if((rails?.Any(rail=>rail.IsUseable()) ?? false)&& useable) return true;
             return false;
         }
 
+        /// <summary>
+        /// Calculates the distance between the starting tile and the ending tile
+        /// </summary>
         public int GetDistance()
         {
             return Find.WorldGrid.TraversalDistanceBetween(startMap.Tile, endMap.Tile);

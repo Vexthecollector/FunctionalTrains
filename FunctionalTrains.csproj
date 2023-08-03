@@ -62,7 +62,6 @@
     <Compile Include="Source\Comps\Comp_TrainStation.cs" />
     <Compile Include="Source\Comps\PlaceWorker\PlaceWorker_OnTrainStation.cs" />
     <Compile Include="Source\Comps\Def\FunctionalTrainsDefOf.cs" />
-    <Compile Include="Source\Comps\Skyfaller_Train.cs" />
     <Compile Include="Source\Comps\WorldComponent\WorldComponent_StationList.cs" />
     <Compile Include="Source\Comps\WorldComponent\WorldComponent_TunnelList.cs" />
     <Compile Include="Source\Comps\Comp_LaunchableTrain.cs" />

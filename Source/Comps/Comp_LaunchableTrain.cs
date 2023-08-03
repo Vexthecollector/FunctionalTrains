@@ -30,7 +30,7 @@ namespace FunctionalTrains
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             base.PostSpawnSetup(respawningAfterLoad);
-            currentlyResidingStation = getStation();
+            currentlyResidingStation = GetCurrentlyResidingStation();
             if (currentlyResidingStation != null) currentlyResidingStation.isOccupied = true;
             if (respawningAfterLoad) return;
         }
@@ -43,7 +43,7 @@ namespace FunctionalTrains
 
         public void Send(Rail rail)
         {
-            Comp_TrainStation destinationStation = getDestinationStation();
+            Comp_TrainStation destinationStation = GetUseableDestinationStation();
 
 
             if (destinationStation != null)
@@ -51,8 +51,8 @@ namespace FunctionalTrains
 
                 if (this.Props.requireFuel)
                 {
-                    ;
-                    float fuelcost = Find.WorldGrid.TraversalDistanceBetween(currentlyResidingStation.Map.Tile, destinationStation.Map.Tile) * 2;
+                    float fuelcost = CalculateFuelCost(destinationStation.Map);
+                    //float fuelcost = Find.WorldGrid.TraversalDistanceBetween(currentlyResidingStation.Map.Tile, destinationStation.Map.Tile) * 2;
                     CompRefuelable currentFuel = currentlyResidingStation.parent.GetComp<CompRefuelable>();
                     if (currentFuel.Fuel >= fuelcost)
                     {
@@ -74,6 +74,17 @@ namespace FunctionalTrains
             }
         }
 
+        private float CalculateFuelCost(Map map)
+        {
+            float fuelcost = Find.WorldGrid.TraversalDistanceBetween(currentlyResidingStation.Map.Tile, map.Tile) * 2;
+            float cargo = 0;
+            foreach(Thing thing in cachedCompTransporter.innerContainer)
+            {
+                cargo += thing.stackCount * thing.GetStatValue(StatDefOf.Mass);
+            }
+            fuelcost *= 1 + (cargo / 1000);
+            return fuelcost;
+        }
 
         private Thing SendTrainToNewMap(Comp_TrainStation destinationStation, Map map, Building_Train oldBuilding, ThingDef def, IntVec3 newPosition, Rail rail)
         {
@@ -84,7 +95,10 @@ namespace FunctionalTrains
             newBuilding.SetFaction(Faction.OfPlayer);
             cachedCompTransporter.innerContainer.TryTransferAllToContainer(newBuilding.GetComp<CompTransporter>().innerContainer);
             newBuilding.GetComp<CompTransporter>().groupID = 0;
-            int time = rail.RailType().ticksPerTile();
+            int time = PossibleTicksPerTile(this.Props.ticksPerTile, rail.RailType().ticksPerTile());
+            time *= Find.WorldGrid.TraversalDistanceBetween(oldBuilding.Tile, map.Tile);
+            time=Math.Abs(time);
+            Messages.Message($"Train will arrive in {time} ticks", MessageTypeDefOf.NeutralEvent);
             newBuilding.PrepareArrive(100, time, rail, destinationStation.parent.Rotation);
             currentlyResidingStation.isOccupied = false;
             cachedCompTransporter.innerContainer.Clear();
@@ -94,27 +108,27 @@ namespace FunctionalTrains
             return newBuilding;
         }
 
-
-
-        public Comp_TrainStation getDestinationStation()
+        private int PossibleTicksPerTile(int trainSpeed, int railSpeed)
         {
-            if (getStation() != null)
-            {
+            return Math.Max(trainSpeed, railSpeed);
+        }
 
+
+        public Comp_TrainStation GetUseableDestinationStation()
+        {
+            if (GetCurrentlyResidingStation() != null)
+            {
                 Comp_TrainStation station = currentlyResidingStation;
-                if (station != null && station.selectedStation != null)
+                if (station?.selectedStation != null && (station.currentTunnel?.IsUseable() ?? false))
                 {
-                    if (station.currentTunnel != null && station.currentTunnel.IsUseable())
-                    {
-                        return station.selectedStation;
-                    }
+                    return station.selectedStation;
                 }
             }
             return null;
 
         }
 
-        public Comp_TrainStation getStation()
+        public Comp_TrainStation GetCurrentlyResidingStation()
         {
             if (currentlyResidingStation != null)
             {
@@ -124,7 +138,8 @@ namespace FunctionalTrains
             List<Comp_TrainStation> stations = WorldComponent_StationList.Instance.Stations;
             for (int i = 0; i < WorldComponent_StationList.Instance.Stations.Count; i++)
             {
-                if (stations[i].parent.Position == this.parent.Position)
+
+                if (stations[i].parent.Map == this.parent.Map && stations[i].parent.Position == this.parent.Position)
                 {
                     stations[i].isOccupied = true;
                     return stations[i];
@@ -187,24 +202,26 @@ namespace FunctionalTrains
                 {
                     if (this.AnythingLeftToLoad)
                     {
-                        Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation("ConfirmSendNotCompletelyLoadedPods".Translate(this.FirstThingLeftToLoad.LabelCapNoCount, this.FirstThingLeftToLoad), new Action(SendOptions), false, null, WindowLayer.Dialog));
+                        Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation("ConfirmSendNotCompletelyLoadedPods".Translate(this.FirstThingLeftToLoad.LabelCapNoCount, this.FirstThingLeftToLoad), new Action(SelectRailToSendTrainOn), false, null, WindowLayer.Dialog));
                         return;
                     }
-                    SendOptions();
-                    //this.Send();
+                    SelectRailToSendTrainOn();
                 };
                 yield return command_Action;
             }
             yield break;
         }
 
-        private void SendOptions()
+        /// <summary>
+        /// Goes through all possible Rails and returns those that are useable for the current train to be send on.
+        /// </summary>
+        private void SelectRailToSendTrainOn()
         {
-            if (getStation() != null)
+            if (GetCurrentlyResidingStation() != null)
             {
-                currentlyResidingStation = getStation();
+                currentlyResidingStation = GetCurrentlyResidingStation();
                 List<FloatMenuOption> list = new List<FloatMenuOption>();
-                if (currentlyResidingStation.currentTunnel?.Rails() != null && !getDestinationStation().isOccupied)
+                if (currentlyResidingStation.currentTunnel?.Rails() != null && !GetUseableDestinationStation().isOccupied)
                 {
 
                     for (int i = 0; i < currentlyResidingStation.currentTunnel.Rails().Count; i++)

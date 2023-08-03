@@ -24,8 +24,6 @@ namespace FunctionalTrains
         public override void ExposeData()
         {
             base.ExposeData();
-            //Scribe_Collections.Look(ref stations, "FunctionalTrainsStations", LookMode.Deep);
-            //if (stations == null) stations = new List<Comp_TrainStation>();
         }
 
     }

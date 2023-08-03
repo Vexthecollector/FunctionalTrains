@@ -25,8 +25,6 @@ namespace FunctionalTrains
         public override void ExposeData()
         {
             base.ExposeData();
-            
-
             Scribe_Collections.Look(ref tunnels, "FunctionalTrainsTunnels", LookMode.Deep);
             if (tunnels == null) tunnels = new List<Tunnel>();
         }

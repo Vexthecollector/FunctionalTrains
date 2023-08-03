@@ -10,7 +10,6 @@ namespace FunctionalTrains
     public class TunnelType :IExposable
     {
         int type;
-
         public TunnelType() { }
         public TunnelType(int type)
         {

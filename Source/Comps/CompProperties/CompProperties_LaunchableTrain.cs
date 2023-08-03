@@ -15,5 +15,6 @@ namespace FunctionalTrains
             this.compClass = typeof(Comp_LaunchableTrain);
         }
         public bool requireFuel = true;
+        public int ticksPerTile = 10000;
     }
 }

@@ -35,10 +35,13 @@ namespace FunctionalTrains
             {
                 if (leavingTicks > 0) { return; }
 
+                else
+                {
 
-                Vector3 v3 = this.DrawPos;
-                v3 += angleVector;
-                DrawAt(v3);
+                    Vector3 v3 = this.DrawPos;
+                    v3 += angleVector;
+                    DrawAt(v3);
+                }
 
                 return;
             }
@@ -52,7 +55,7 @@ namespace FunctionalTrains
             {
                 increaseV3();
                 ticksToLeave--;
-                
+
 
                 if (ticksToLeave < 1)
                 {
@@ -103,6 +106,9 @@ namespace FunctionalTrains
                 getStation();
         }
 
+        /// <summary>
+        /// Sets the train to be leaving. This causes it to draw a leaving animation and destroy the train after it is finished.
+        /// </summary>
         public void TrainLeave(int ticksToLeave, DestroyMode mode = DestroyMode.Vanish)
         {
             Rot4 r4 = this.Rotation;
@@ -130,8 +136,15 @@ namespace FunctionalTrains
 
 
 
-
-        public void PrepareArrive(int ticksToArrive, int leavingTicks, Rail rail,Rot4 r4)
+        /// <summary>
+        /// Prepares the arrival of the train. 
+        /// It is set to be not selectable and not destroyable until it arrives.
+        /// </summary>
+        /// <param name="ticksToArrive">How long the drawing animation should take</param>
+        /// <param name="leavingTicks">The time it takes for the train to travel until the drawing animation begins</param>
+        /// <param name="rail">The rail that is being used by the train</param>
+        /// <param name="r4">The rotation the train should have on arrival</param>
+        public void PrepareArrive(int ticksToArrive, int leavingTicks, Rail rail, Rot4 r4)
         {
             usedRail = rail;
             rail.inUse = true;
@@ -153,7 +166,9 @@ namespace FunctionalTrains
             Scribe_Deep.Look(ref currentlyResidingStation, "currentlyResidingStation");
         }
 
-
+        /// <summary>
+        /// Gets the train station this train is currently on top of.
+        /// </summary>
         public Comp_TrainStation getStation()
         {
             if (currentlyResidingStation != null)

@@ -44,7 +44,9 @@ namespace FunctionalTrains
             else if (type == 6) return "Archotech Rail";
             return null;
         }
-
+        /// <summary>
+        /// The number of ticks required for the train to travel per tile, depend on the type of Rail
+        /// </summary>
         public int ticksPerTile()
         {
             if (type == 1) return 10000;
