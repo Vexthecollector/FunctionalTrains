@@ -14,7 +14,10 @@ namespace FunctionalTrains
     [StaticConstructorOnStartup]
     public class Comp_TrainStation : ThingComp
     {
-        private static readonly Texture2D stationSelectIcon = ContentFinder<Texture2D>.Get("Things/Buildings/FunctionalTrains/stationSelectIcon");
+        private static readonly Texture2D stationSelectIcon = ContentFinder<Texture2D>.Get("Gizmos/FunctionalTrains/Icons/train-station");
+        private static readonly Texture2D renameSelectIcon = ContentFinder<Texture2D>.Get("Gizmos/FunctionalTrains/Icons/rename");
+        private static readonly Texture2D tunnelSelectIcon = ContentFinder<Texture2D>.Get("Gizmos/FunctionalTrains/Icons/tunnel");
+        private static readonly Texture2D railSelectIcon = ContentFinder<Texture2D>.Get("Gizmos/FunctionalTrains/Icons/rail");
         public ThingOwner innerContainer;
         string stringContent;
         public string name;
@@ -47,7 +50,8 @@ namespace FunctionalTrains
             {
                 action = () => Find.WindowStack.Add(new Dialog_RenameStation(this)),
                 defaultLabel = "Rename Station",
-                defaultDesc = "Rename the Station"
+                defaultDesc = "Rename the Station",
+                icon = renameSelectIcon
             };
             selectStation = new Command_Action
             {
@@ -66,7 +70,8 @@ namespace FunctionalTrains
                 action = delegate
                 {
                     PossibleTunnelCreations();
-                }
+                },
+                icon = tunnelSelectIcon
             };
             createRail = new Command_Action
             {
@@ -75,7 +80,8 @@ namespace FunctionalTrains
                 action = delegate
                 {
                     CreateRail();
-                }
+                },
+                icon = railSelectIcon
             };
             instantFinishRail = new Command_Action
             {

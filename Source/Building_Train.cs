@@ -52,7 +52,7 @@ namespace FunctionalTrains
             {
                 increaseV3();
                 ticksToLeave--;
-                i++;
+                
 
                 if (ticksToLeave < 1)
                 {

@@ -94,7 +94,7 @@
 				<max1PerGroup>true</max1PerGroup>
 			</li>
 			<li Class="FunctionalTrains.CompProperties_LaunchableTrain">
-				<requireFuel>false</requireFuel>
+				<requireFuel>true</requireFuel>
 			</li>
 		</comps>
 		<placeWorkers>

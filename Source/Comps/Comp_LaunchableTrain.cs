@@ -31,7 +31,7 @@ namespace FunctionalTrains
         {
             base.PostSpawnSetup(respawningAfterLoad);
             currentlyResidingStation = getStation();
-            if(currentlyResidingStation != null) currentlyResidingStation.isOccupied = true;
+            if (currentlyResidingStation != null) currentlyResidingStation.isOccupied = true;
             if (respawningAfterLoad) return;
         }
 
@@ -44,9 +44,28 @@ namespace FunctionalTrains
         public void Send(Rail rail)
         {
             Comp_TrainStation destinationStation = getDestinationStation();
+
+
             if (destinationStation != null)
             {
-                SendTrainToNewMap(destinationStation, destinationStation.Map, (Building_Train)this.parent, FunctionalTrainsDefOf.FT_Train, destinationStation.parent.Position, rail);
+
+                if (this.Props.requireFuel)
+                {
+                    float fuelcost = currentlyResidingStation.currentTunnel.GetDistance() * 2;
+                    CompRefuelable currentFuel = currentlyResidingStation.parent.GetComp<CompRefuelable>();
+                    if (currentFuel.Fuel > fuelcost)
+                    {
+                        SendTrainToNewMap(destinationStation, destinationStation.Map, (Building_Train)this.parent, FunctionalTrainsDefOf.FT_Train, destinationStation.parent.Position, rail);
+                        currentFuel.ConsumeFuel(fuelcost);
+                    }
+                    else Messages.Message($"Not Enough Fuel to send to destination. {currentFuel.Fuel} out of required {fuelcost}", MessageTypeDefOf.CautionInput);
+                }
+                else
+                {
+
+                    SendTrainToNewMap(destinationStation, destinationStation.Map, (Building_Train)this.parent, FunctionalTrainsDefOf.FT_Train, destinationStation.parent.Position, rail);
+                }
+
             }
             else
             {
@@ -55,7 +74,7 @@ namespace FunctionalTrains
         }
 
 
-        private Thing SendTrainToNewMap(Comp_TrainStation destinationStation,Map map, Building_Train oldBuilding, ThingDef def, IntVec3 newPosition, Rail rail)
+        private Thing SendTrainToNewMap(Comp_TrainStation destinationStation, Map map, Building_Train oldBuilding, ThingDef def, IntVec3 newPosition, Rail rail)
         {
             int hitPoints = oldBuilding.HitPoints;
             IntVec3 position = newPosition;
@@ -64,7 +83,7 @@ namespace FunctionalTrains
             newBuilding.SetFaction(Faction.OfPlayer);
             cachedCompTransporter.innerContainer.TryTransferAllToContainer(newBuilding.GetComp<CompTransporter>().innerContainer);
             newBuilding.GetComp<CompTransporter>().groupID = 0;
-            int time=rail.RailType().ticksPerTile();
+            int time = rail.RailType().ticksPerTile();
             newBuilding.PrepareArrive(100, time, rail);
             currentlyResidingStation.isOccupied = false;
             cachedCompTransporter.innerContainer.Clear();
