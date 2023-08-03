@@ -10,7 +10,6 @@ namespace FunctionalTrains
 {
     public class Tunnel : IExposable
     {
-
         public Map startMap;
         public Map endMap;
         List<Rail> rails = new List<Rail>();
@@ -29,8 +28,6 @@ namespace FunctionalTrains
             totalTunnelWorkRequired = tunnelWorkRequired = tunnelType.WorkRequired() * GetDistance();
         }
 
-
-
         public bool IsFinished() { return finished; }
 
         public void WorkOnTunnel(float workdone)
@@ -41,7 +38,7 @@ namespace FunctionalTrains
 
         public bool IsUseable()
         {
-            if(rails.Any(rail=>rail.IsUseable()) && useable) return true;
+            if((rails?.Any(rail=>rail.IsUseable()) ?? false)&& useable) return true;
             return false;
         }
 

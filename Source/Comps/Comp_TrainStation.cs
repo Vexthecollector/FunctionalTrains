@@ -26,6 +26,7 @@ namespace FunctionalTrains
         private Command_Action createRail;
         private Command_Action instantFinishRail;
         public Tunnel currentTunnel;
+        public bool isOccupied;
         public Map Map => parent.MapHeld;
 
 
@@ -93,7 +94,7 @@ namespace FunctionalTrains
         public void DoPostSpawnStuff()
         {
             selectedStation = selectedStationThing.GetComp<Comp_TrainStation>();
-            currentTunnel = GetTunnel();
+            //currentTunnel = GetTunnel();
         }
         public override void PostDeSpawn(Map map)
         {
@@ -146,7 +147,8 @@ namespace FunctionalTrains
             base.PostExposeData();
             Scribe_Values.Look(ref name, "Name");
             Scribe_References.Look(ref selectedStationThing, "selectedStationThing");
-            //Scribe_Deep.Look(ref currentTunnel, "stationCurrentTunnel");
+            Scribe_Values.Look(ref isOccupied, "isOccupied");
+            Scribe_Deep.Look(ref currentTunnel, "stationCurrentTunnel");
         }
 
         public override void CompTickRare()

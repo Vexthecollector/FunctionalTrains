@@ -55,5 +55,7 @@ namespace FunctionalTrains
             Scribe_Values.Look(ref finished, "railfinished");
             Scribe_Values.Look(ref useable, "railuseable");
         }
+
+        
     }
 }

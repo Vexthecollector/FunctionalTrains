@@ -44,5 +44,16 @@ namespace FunctionalTrains
             else if (type == 6) return "Archotech Rail";
             return null;
         }
+
+        public int ticksPerTile()
+        {
+            if (type == 1) return 10000;
+            else if (type == 2) return 5000;
+            else if (type == 3) return 2000;
+            else if (type == 4) return 1000;
+            else if (type == 5) return 500;
+            else if (type == 6) return 100;
+            return -1;
+        }
     }
 }

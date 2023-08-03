@@ -2,9 +2,9 @@
 <Defs>
 	<ThingDef Name="StationBase" ParentName="BuildingBase" Abstract="true">
 		<tickerType>Rare</tickerType>
-		<thingClass>Building</thingClass>
+		<thingClass>FunctionalTrains.Building_TrainStation</thingClass>
 		<category>Building</category>
-		<rotatable>false</rotatable>
+		<rotatable>true</rotatable>
 		<neverMultiSelect>true</neverMultiSelect>
 		<designationCategory>Misc</designationCategory>
 		<constructEffect>ConstructMetal</constructEffect>
@@ -56,9 +56,10 @@
 		<size>(5,7)</size>
 	</ThingDef>
 
-	<ThingDef Name="TrainBase" ParentName="BuildingBase" Abstract="true">
+	<ThingDef Name="FT_TrainBase" ParentName="BuildingBase" Abstract="true">
 		<tickerType>Normal</tickerType>
-		<thingClass>Building</thingClass>
+		<thingClass>FunctionalTrains.Building_Train</thingClass>
+		<drawerType>RealtimeOnly</drawerType>
 		<category>Building</category>
 		<rotatable>true</rotatable>
 		<neverMultiSelect>true</neverMultiSelect>
@@ -70,7 +71,7 @@
 		<altitudeLayer>Building</altitudeLayer>
 	</ThingDef>
 	
-	<ThingDef ParentName="TrainBase">
+	<ThingDef ParentName="FT_TrainBase">
 		<defName>FT_Train</defName>
 		<label>basic train</label>
 		<description>A Basic Train</description>

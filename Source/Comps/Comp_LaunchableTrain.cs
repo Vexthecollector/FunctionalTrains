@@ -31,28 +31,22 @@ namespace FunctionalTrains
         {
             base.PostSpawnSetup(respawningAfterLoad);
             currentlyResidingStation = getStation();
+            if(currentlyResidingStation != null) currentlyResidingStation.isOccupied = true;
             if (respawningAfterLoad) return;
         }
-        /*
-        public void Send()
+
+        public override void PostDeSpawn(Map map)
         {
-            Comp_TrainStation destinationStation = getDestinationStation();
-            if (destinationStation != null && (currentlyResidingStation.currentTunnel?.IsUseable() ?? false))
-            {
-                SendTrainToNewMap(destinationStation.Map, this.parent, FunctionalTrainsDefOf.FT_Train, destinationStation.parent.Position);
-            }
-            else
-            {
-                Messages.Message("Can't send Train. Tunnel or Destination Unreachable", MessageTypeDefOf.CautionInput);
-            }
-        }*/
+            currentlyResidingStation.isOccupied = false;
+            base.PostDeSpawn(map);
+        }
 
         public void Send(Rail rail)
         {
             Comp_TrainStation destinationStation = getDestinationStation();
             if (destinationStation != null)
             {
-                SendTrainToNewMap(destinationStation.Map, this.parent, FunctionalTrainsDefOf.FT_Train, destinationStation.parent.Position,rail);
+                SendTrainToNewMap(destinationStation, destinationStation.Map, (Building_Train)this.parent, FunctionalTrainsDefOf.FT_Train, destinationStation.parent.Position, rail);
             }
             else
             {
@@ -61,24 +55,22 @@ namespace FunctionalTrains
         }
 
 
-        private Thing SendTrainToNewMap(Map map, ThingWithComps oldBuilding, ThingDef def, IntVec3 newPosition,Rail rail)
+        private Thing SendTrainToNewMap(Comp_TrainStation destinationStation,Map map, Building_Train oldBuilding, ThingDef def, IntVec3 newPosition, Rail rail)
         {
-            rail.inUse = true;
-            
             int hitPoints = oldBuilding.HitPoints;
             IntVec3 position = newPosition;
-            ThingWithComps newBuilding = (ThingWithComps)ThingMaker.MakeThing(def);
+            Building_Train newBuilding = (Building_Train)ThingMaker.MakeThing(def);
             newBuilding.HitPoints = hitPoints;
             newBuilding.SetFaction(Faction.OfPlayer);
             cachedCompTransporter.innerContainer.TryTransferAllToContainer(newBuilding.GetComp<CompTransporter>().innerContainer);
-            GenSpawn.Spawn(newBuilding, position, map);
             newBuilding.GetComp<CompTransporter>().groupID = 0;
+            int time=rail.RailType().ticksPerTile();
+            newBuilding.PrepareArrive(100, time, rail);
+            currentlyResidingStation.isOccupied = false;
             cachedCompTransporter.innerContainer.Clear();
             cachedCompTransporter.CancelLoad();
-            //SkyfallerDrawPosUtility.DrawPos_ConstantSpeed(newBuilding.DrawPos, 500, 90, 10);
-            oldBuilding.Destroy();
-
-            rail.inUse=false;
+            oldBuilding.TrainLeave(200);
+            GenSpawn.Spawn(newBuilding, position, map, destinationStation.parent.Rotation);
             return newBuilding;
         }
 
@@ -86,12 +78,16 @@ namespace FunctionalTrains
 
         public Comp_TrainStation getDestinationStation()
         {
-            Comp_TrainStation station = currentlyResidingStation;
-            if (station != null && station.selectedStation != null)
+            if (getStation() != null)
             {
-                if (station.currentTunnel != null && station.currentTunnel.IsUseable())
+
+                Comp_TrainStation station = currentlyResidingStation;
+                if (station != null && station.selectedStation != null)
                 {
-                    return station.selectedStation;
+                    if (station.currentTunnel != null && station.currentTunnel.IsUseable())
+                    {
+                        return station.selectedStation;
+                    }
                 }
             }
             return null;
@@ -100,11 +96,17 @@ namespace FunctionalTrains
 
         public Comp_TrainStation getStation()
         {
+            if (currentlyResidingStation != null)
+            {
+                currentlyResidingStation.isOccupied = true;
+                return currentlyResidingStation;
+            }
             List<Comp_TrainStation> stations = WorldComponent_StationList.Instance.Stations;
             for (int i = 0; i < WorldComponent_StationList.Instance.Stations.Count; i++)
             {
                 if (stations[i].parent.Position == this.parent.Position)
                 {
+                    stations[i].isOccupied = true;
                     return stations[i];
                 }
             }
@@ -178,27 +180,39 @@ namespace FunctionalTrains
 
         private void SendOptions()
         {
-            List<FloatMenuOption> list = new List<FloatMenuOption>();
-            for (int i = 0; i < currentlyResidingStation.currentTunnel.Rails().Count; i++)
+            if (getStation() != null)
             {
-                int j = i;
-                if (currentlyResidingStation.currentTunnel.Rails()[j].IsUseable())
+                currentlyResidingStation = getStation();
+                List<FloatMenuOption> list = new List<FloatMenuOption>();
+                if (currentlyResidingStation.currentTunnel?.Rails() != null && !getDestinationStation().isOccupied)
                 {
 
-                    list.Add(new FloatMenuOption($"Select Rail {j + 1}, {currentlyResidingStation.currentTunnel.Rails()[j].RailType().RailName()}", () =>
+                    for (int i = 0; i < currentlyResidingStation.currentTunnel.Rails().Count; i++)
                     {
-                        Send(currentlyResidingStation.currentTunnel.Rails()[j]);
-                    }));
-                }
+                        int j = i;
+                        if (currentlyResidingStation.currentTunnel.Rails()[j].IsUseable())
+                        {
 
-            }
-            if (list.Any<FloatMenuOption>())
-            {
-                Find.WindowStack.Add(new FloatMenu(list));
-            }
-            else
-            {
-                Messages.Message("No Useable Rails Found",MessageTypeDefOf.NegativeEvent);
+                            list.Add(new FloatMenuOption($"Select Rail {j + 1}, {currentlyResidingStation.currentTunnel.Rails()[j].RailType().RailName()}", () =>
+                            {
+                                Send(currentlyResidingStation.currentTunnel.Rails()[j]);
+                            }));
+                        }
+
+                    }
+                    if (list.Any<FloatMenuOption>())
+                    {
+                        Find.WindowStack.Add(new FloatMenu(list));
+                    }
+                    else
+                    {
+                        Messages.Message("No Useable Rails Found", MessageTypeDefOf.NegativeEvent);
+                    }
+                }
+                else
+                {
+                    Messages.Message("No Useable Tunnel or Destination Found", MessageTypeDefOf.NegativeEvent);
+                }
             }
         }
         public override string CompInspectStringExtra()
@@ -213,5 +227,6 @@ namespace FunctionalTrains
             }
             return "ReadyForLaunch".Translate();
         }
+
     }
 }
