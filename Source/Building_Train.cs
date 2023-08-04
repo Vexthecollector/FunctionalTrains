@@ -9,6 +9,7 @@ using Verse;
 
 namespace FunctionalTrains
 {
+    [StaticConstructorOnStartup]
     public class Building_Train : Building
     {
         bool leaving;
@@ -21,6 +22,10 @@ namespace FunctionalTrains
         private Rail usedRail;
         Vector3 initialAngleVector;
         Vector3 angleVector;
+        public List<Wagon> traincarList;
+        public static readonly Material Wagon = MaterialPool.MatFrom("Things/Buildings/FunctionalTrains/freight-wagon");
+
+        
 
         public override void Draw()
         {
@@ -46,6 +51,12 @@ namespace FunctionalTrains
                 return;
             }
             base.Draw();
+            Vector3 drawVector = base.DrawPos;
+            Rot4 r4 = this.Rotation;
+            drawVector -= r4.FacingCell.ToVector3();
+            Matrix4x4 matrix = Matrix4x4.TRS(drawVector, Quaternion.identity, Vector3.one);
+            Graphics.DrawMesh(MeshPool.plane10, matrix, Wagon, 0);
+
         }
 
         public override void Tick()

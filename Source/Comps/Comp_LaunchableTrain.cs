@@ -18,6 +18,11 @@ namespace FunctionalTrains
     {
         private CompTransporter cachedCompTransporter;
         private Comp_TrainStation currentlyResidingStation;
+        private static readonly Texture2D addWagonIcon = ContentFinder<Texture2D>.Get("Gizmos/FunctionalTrains/Icons/freight-wagon");
+        private static readonly Texture2D removeWagonIcon = ContentFinder<Texture2D>.Get("Gizmos/FunctionalTrains/Icons/freight-wagon");
+        private Command_Action addWagon;
+        private Command_Action removeWagon;
+
 
         public CompProperties_LaunchableTrain Props
         {
@@ -30,6 +35,28 @@ namespace FunctionalTrains
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             base.PostSpawnSetup(respawningAfterLoad);
+
+            addWagon = new Command_Action
+            {
+                action = delegate
+                {
+                    AddWagonFloatMenu();
+                },
+                defaultLabel = "Add Wagon",
+                defaultDesc = "Add a Wagon to the Train",
+                icon = addWagonIcon
+            };
+            removeWagon = new Command_Action
+            {
+                action = delegate
+                {
+                    RemoveWagonFloatMenu();
+                },
+                defaultLabel = "Remove Wagon",
+                defaultDesc = "Remove a Wagon from the Train",
+                icon = removeWagonIcon
+            };
+
             currentlyResidingStation = GetCurrentlyResidingStation();
             if (currentlyResidingStation != null) currentlyResidingStation.isOccupied = true;
             if (respawningAfterLoad) return;
@@ -78,7 +105,7 @@ namespace FunctionalTrains
         {
             float fuelcost = Find.WorldGrid.TraversalDistanceBetween(currentlyResidingStation.Map.Tile, map.Tile) * 2;
             float cargo = 0;
-            foreach(Thing thing in cachedCompTransporter.innerContainer)
+            foreach (Thing thing in cachedCompTransporter.innerContainer)
             {
                 cargo += thing.stackCount * thing.GetStatValue(StatDefOf.Mass);
             }
@@ -97,7 +124,7 @@ namespace FunctionalTrains
             newBuilding.GetComp<CompTransporter>().groupID = 0;
             int time = PossibleTicksPerTile(this.Props.ticksPerTile, rail.RailType().ticksPerTile());
             time *= Find.WorldGrid.TraversalDistanceBetween(oldBuilding.Tile, map.Tile);
-            time=Math.Abs(time);
+            time = Math.Abs(time);
             Messages.Message($"Train will arrive in {time} ticks", MessageTypeDefOf.NeutralEvent);
             newBuilding.PrepareArrive(100, time, rail, destinationStation.parent.Rotation);
             currentlyResidingStation.isOccupied = false;
@@ -209,7 +236,66 @@ namespace FunctionalTrains
                 };
                 yield return command_Action;
             }
+            else
+            {
+                yield return addWagon;
+                yield return removeWagon;
+            }
             yield break;
+        }
+
+        private void AddWagonFloatMenu()
+        {
+
+            List<FloatMenuOption> list = new List<FloatMenuOption>();
+
+
+            list.Add(new FloatMenuOption($"Add Wagon ", () =>
+            {
+                AddWagon();
+            }));
+
+            if (list.Any<FloatMenuOption>())
+            {
+                Find.WindowStack.Add(new FloatMenu(list));
+            }
+
+
+
+        }
+
+        private void AddWagon()
+        {
+
+        }
+
+
+        private void RemoveWagonFloatMenu()
+        {
+            if (!((Building_Train)this.parent).traincarList.NullOrEmpty())
+            {
+
+                List<FloatMenuOption> list = new List<FloatMenuOption>();
+
+
+
+                list.Add(new FloatMenuOption($"Remove Wagon", () =>
+                {
+                    RemoveWagon();
+                }));
+
+
+                if (list.Any<FloatMenuOption>())
+                {
+                    Find.WindowStack.Add(new FloatMenu(list));
+                }
+            }
+        }
+
+
+        private void RemoveWagon()
+        {
+
         }
 
         /// <summary>

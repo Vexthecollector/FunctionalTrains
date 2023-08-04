@@ -104,4 +104,32 @@
 		</placeWorkers>
 		<size>(3,5)</size>
 	</ThingDef>
+
+	<ThingDef Name="FT_WagonBase" ParentName="BuildingBase" Abstract="True">
+		<tickerType>Normal</tickerType>
+		<thingClass>Building</thingClass>
+		<drawerType>RealtimeOnly</drawerType>
+		<category>Building</category>
+		<rotatable>true</rotatable>
+		<surfaceType>Item</surfaceType>
+		<constructEffect>ConstructMetal</constructEffect>
+		<researchPrerequisites>
+		</researchPrerequisites>
+		<altitudeLayer>Building</altitudeLayer>
+		<building>
+			<deconstructible>false</deconstructible>
+		</building>
+	</ThingDef>
+
+	<ThingDef Name="FT_CargoWagonBasic" ParentName="FT_WagonBase">
+		<defName>FT_CargoWagon</defName>
+		<label>cargo wagon</label>
+		<graphicData>
+			<texPath>Things/Buildings/FunctionalTrains/freight-wagon</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<shaderType>Transparent</shaderType>
+			<drawSize>(3,3)</drawSize>
+		</graphicData>
+		<size>(3,3)</size>
+	</ThingDef>
 </Defs>
