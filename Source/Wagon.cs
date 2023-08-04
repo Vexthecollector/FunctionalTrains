@@ -8,6 +8,6 @@ namespace FunctionalTrains
 {
     public class Wagon
     {
-
+        public float massCapacity = 1000f;
     }
 }

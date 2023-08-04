@@ -70,7 +70,7 @@
 		</researchPrerequisites>
 		<altitudeLayer>Building</altitudeLayer>
 	</ThingDef>
-	
+
 	<ThingDef ParentName="FT_TrainBase">
 		<defName>FT_Train</defName>
 		<label>basic train</label>
@@ -105,31 +105,41 @@
 		<size>(3,5)</size>
 	</ThingDef>
 
-	<ThingDef Name="FT_WagonBase" ParentName="BuildingBase" Abstract="True">
-		<tickerType>Normal</tickerType>
-		<thingClass>Building</thingClass>
-		<drawerType>RealtimeOnly</drawerType>
-		<category>Building</category>
-		<rotatable>true</rotatable>
-		<surfaceType>Item</surfaceType>
-		<constructEffect>ConstructMetal</constructEffect>
-		<researchPrerequisites>
-		</researchPrerequisites>
-		<altitudeLayer>Building</altitudeLayer>
-		<building>
-			<deconstructible>false</deconstructible>
-		</building>
-	</ThingDef>
 
-	<ThingDef Name="FT_CargoWagonBasic" ParentName="FT_WagonBase">
+	<FunctionalTrains.WagonDef Name="FT_WagonBase" Abstract="True">
+	</FunctionalTrains.WagonDef>
+
+	<FunctionalTrains.WagonDef Name="FT_CargoWagonBasic" ParentName="FT_WagonBase">
 		<defName>FT_CargoWagon</defName>
 		<label>cargo wagon</label>
+		<graphic>Things/Buildings/FunctionalTrains/freight-wagon</graphic>
 		<graphicData>
-			<texPath>Things/Buildings/FunctionalTrains/freight-wagon</texPath>
-			<graphicClass>Graphic_Single</graphicClass>
+			<texPath>Things/Buildings/FunctionalTrains/Train</texPath>
+			<drawSize>4,6</drawSize>
+			<graphicClass>Graphic_Multi</graphicClass>
 			<shaderType>Transparent</shaderType>
-			<drawSize>(3,3)</drawSize>
+			<damageData>
+				<rect>(0.2,0.2,0.6,0.6)</rect>
+			</damageData>
 		</graphicData>
-		<size>(3,3)</size>
-	</ThingDef>
+		<massCapacity>1000</massCapacity>
+	</FunctionalTrains.WagonDef>
+
+	<FunctionalTrains.WagonDef Name="FT_TrainWagonTest" ParentName="FT_WagonBase">
+		<defName>FT_TrainWagonTest</defName>
+		<label>train wagon</label>
+		<graphicData>
+			<texPath>Things/Buildings/FunctionalTrains/Train</texPath>
+			<drawSize>4,6</drawSize>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<shaderType>Transparent</shaderType>
+			<damageData>
+				<rect>(0.2,0.2,0.6,0.6)</rect>
+			</damageData>
+		</graphicData>
+		<massCapacity>1000</massCapacity>
+	</FunctionalTrains.WagonDef>
+
+
+
 </Defs>

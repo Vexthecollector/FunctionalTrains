@@ -41,6 +41,7 @@ namespace FunctionalTrains
                 action = delegate
                 {
                     AddWagonFloatMenu();
+                    //AddWagon();
                 },
                 defaultLabel = "Add Wagon",
                 defaultDesc = "Add a Wagon to the Train",
@@ -51,6 +52,7 @@ namespace FunctionalTrains
                 action = delegate
                 {
                     RemoveWagonFloatMenu();
+                    //RemoveWagon();
                 },
                 defaultLabel = "Remove Wagon",
                 defaultDesc = "Remove a Wagon from the Train",
@@ -126,11 +128,12 @@ namespace FunctionalTrains
             time *= Find.WorldGrid.TraversalDistanceBetween(oldBuilding.Tile, map.Tile);
             time = Math.Abs(time);
             Messages.Message($"Train will arrive in {time} ticks", MessageTypeDefOf.NeutralEvent);
-            newBuilding.PrepareArrive(100, time, rail, destinationStation.parent.Rotation);
+            newBuilding.PrepareArrive(1000, time, rail, destinationStation.parent.Rotation);
+            newBuilding.wagonList = oldBuilding.wagonList;
             currentlyResidingStation.isOccupied = false;
             cachedCompTransporter.innerContainer.Clear();
             cachedCompTransporter.CancelLoad();
-            oldBuilding.TrainLeave(200);
+            oldBuilding.TrainLeave(1000);
             GenSpawn.Spawn(newBuilding, position, map, destinationStation.parent.Rotation);
             return newBuilding;
         }
@@ -248,13 +251,16 @@ namespace FunctionalTrains
         {
 
             List<FloatMenuOption> list = new List<FloatMenuOption>();
-
-
-            list.Add(new FloatMenuOption($"Add Wagon ", () =>
+            List<WagonDef> wagons = DefDatabase<WagonDef>.AllDefsListForReading;
+            foreach (WagonDef def in wagons)
             {
-                AddWagon();
-            }));
 
+                list.Add(new FloatMenuOption($"Add {def.label} ", () =>
+                {
+                    AddWagon(def);
+                }));
+
+            }
             if (list.Any<FloatMenuOption>())
             {
                 Find.WindowStack.Add(new FloatMenu(list));
@@ -264,38 +270,41 @@ namespace FunctionalTrains
 
         }
 
-        private void AddWagon()
+        private void AddWagon(WagonDef def)
         {
-
+            ((Building_Train)this.parent).wagonList.Add(def);
+            ((Building_Train)this.parent).RecalculateMassCapacity();
         }
 
 
         private void RemoveWagonFloatMenu()
         {
-            if (!((Building_Train)this.parent).traincarList.NullOrEmpty())
+            if (!((Building_Train)this.parent).wagonList.NullOrEmpty())
             {
-
                 List<FloatMenuOption> list = new List<FloatMenuOption>();
-
-
-
-                list.Add(new FloatMenuOption($"Remove Wagon", () =>
+                foreach (WagonDef def in ((Building_Train)this.parent).wagonList)
                 {
-                    RemoveWagon();
-                }));
+
+                    list.Add(new FloatMenuOption($"Remove {def.label}", () =>
+                    {
+                        RemoveWagon(def);
+                    }));
+                }
 
 
                 if (list.Any<FloatMenuOption>())
                 {
                     Find.WindowStack.Add(new FloatMenu(list));
                 }
+
             }
         }
 
 
-        private void RemoveWagon()
+        private void RemoveWagon(WagonDef def)
         {
-
+            ((Building_Train)this.parent).wagonList.Remove(def);
+            ((Building_Train)this.parent).RecalculateMassCapacity();
         }
 
         /// <summary>

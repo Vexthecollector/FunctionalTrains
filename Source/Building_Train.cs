@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
+using Verse.Noise;
 
 namespace FunctionalTrains
 {
@@ -22,10 +23,10 @@ namespace FunctionalTrains
         private Rail usedRail;
         Vector3 initialAngleVector;
         Vector3 angleVector;
-        public List<Wagon> traincarList;
-        public static readonly Material Wagon = MaterialPool.MatFrom("Things/Buildings/FunctionalTrains/freight-wagon");
+        public List<WagonDef> wagonList = new List<WagonDef>();
+        //public static readonly Material WagonImage = MaterialPool.MatFrom("Things/Buildings/FunctionalTrains/freight-wagon");
 
-        
+
 
         public override void Draw()
         {
@@ -34,6 +35,7 @@ namespace FunctionalTrains
                 Vector3 v3 = this.DrawPos;
                 v3 += angleVector;
                 DrawAt(v3);
+                DrawExtraWagons(v3);
                 return;
             }
             if (arriving)
@@ -46,17 +48,49 @@ namespace FunctionalTrains
                     Vector3 v3 = this.DrawPos;
                     v3 += angleVector;
                     DrawAt(v3);
+                    DrawExtraWagons(v3);
                 }
 
                 return;
             }
             base.Draw();
-            Vector3 drawVector = base.DrawPos;
-            Rot4 r4 = this.Rotation;
-            drawVector -= r4.FacingCell.ToVector3();
-            Matrix4x4 matrix = Matrix4x4.TRS(drawVector, Quaternion.identity, Vector3.one);
-            Graphics.DrawMesh(MeshPool.plane10, matrix, Wagon, 0);
+            DrawExtraWagons(base.DrawPos);
 
+
+            //Log.Message(drawVector.ToString());
+
+        }
+
+        public void DrawExtraWagons(Vector3 drawPos)
+        {
+            if (wagonList != null)
+            {
+                float distance = 0;
+                for (int i = 0; i < wagonList.Count(); i++)
+                {
+
+                    GraphicData graphicData = wagonList[i].graphicData;
+                    Vector3 drawVector = drawPos;
+                    Rot4 r4 = this.Rotation;
+                    Vector3 facingVector = r4.FacingCell.ToVector3();
+                    facingVector.x *= 3 + distance;
+                    facingVector.z *= 3 + distance;
+                    drawVector -= facingVector;
+                    drawVector.y = AltitudeLayer.BuildingOnTop.AltitudeFor();
+                    Vector3 v3;
+                    if (r4.IsHorizontal)
+                    {
+                        v3 = new Vector3(graphicData.drawSize.y, 0, graphicData.drawSize.x);
+                    }
+                    else
+                    {
+                        v3 = new Vector3(graphicData.drawSize.x, 0, graphicData.drawSize.y);
+                    }
+                    Matrix4x4 matrix = Matrix4x4.TRS(drawVector, Quaternion.identity, v3);
+                    Graphics.DrawMesh(MeshPool.plane10, matrix, graphicData.Graphic.MatAt(r4), 0);
+                    distance += graphicData.drawSize.y;
+                }
+            }
         }
 
         public override void Tick()
@@ -97,6 +131,17 @@ namespace FunctionalTrains
             }
         }
 
+        public void RecalculateMassCapacity()
+        {
+            float extraCapacity = 0;
+            foreach (WagonDef wagon in wagonList)
+            {
+                extraCapacity += wagon.massCapacity;
+            }
+
+            this.GetComp<CompTransporter>().massCapacityOverride = this.GetComp<CompTransporter>().Props.massCapacity + extraCapacity;
+        }
+
         public override void DrawAt(Vector3 drawLoc, bool flip = false)
         {
             base.DrawAt(drawLoc, flip);
@@ -122,8 +167,12 @@ namespace FunctionalTrains
         /// </summary>
         public void TrainLeave(int ticksToLeave, DestroyMode mode = DestroyMode.Vanish)
         {
+            this.def.destroyable = false;
+            this.def.selectable = false;
             Rot4 r4 = this.Rotation;
             initialAngleVector = r4.FacingCell.ToVector3();
+            initialAngleVector.x *= 0.2f;
+            initialAngleVector.z *= 0.2f;
             angleVector = initialAngleVector;
             getStation();
             destroyMode = mode;
